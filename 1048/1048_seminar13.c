@@ -5,7 +5,7 @@
 
 typedef struct NodPrincipal NodPrincipal;
 typedef struct NodSecundar NodSecundar;
-typedef struct Masina Masina;
+typedef struct Cofetarie Cofetarie;
 
 typedef struct Nod Nod;
 typedef struct ListaDubla ListaDubla;
@@ -21,13 +21,13 @@ struct ListaDubla {
 	Nod* last;
 };
 
-struct Masina {
+struct Cofetarie {
 	int id;
-	char* marca;
+	char* nume;
 };
 
 struct NodPrincipal {
-	Masina info;
+	Cofetarie info;
 	NodPrincipal* next;
 	NodSecundar* vecini;
 };
@@ -81,19 +81,19 @@ int pop(ListaDubla* ld) {
 	return ID;
 }
 
-Masina initMasina(int id, const char* marca)
+Cofetarie initCofetarie(int id, const char* nume)
 {
-	Masina masina;
-	masina.id = id;
-	masina.marca = (char*)malloc(strlen(marca) + 1);
-	strcpy(masina.marca, marca);
+	Cofetarie cofetarie;
+	cofetarie.id = id;
+	cofetarie.nume = (char*)malloc(strlen(nume) + 1);
+	strcpy(cofetarie.nume, nume);
 
-	return masina;
+	return cofetarie;
 }
 
-void inserareListaPrincipala(NodPrincipal** cap, Masina masina) {
+void inserareListaPrincipala(NodPrincipal** cap, Cofetarie cofetarie) {
 	NodPrincipal* nou = (NodPrincipal*)malloc(sizeof(NodPrincipal));
-	nou->info = masina;
+	nou->info = cofetarie;
 	nou->next = NULL;
 	nou->vecini = NULL;
 	NodPrincipal* aux = *cap;
@@ -128,17 +128,17 @@ void inserareListaSecundara(NodSecundar** cap, NodPrincipal* info)
 	}
 }
 
-void afisareMasina(Masina m) {
-	printf("\nMasina %s are id-ul %d.", m.marca, m.id);
+void afisareCofetarie(Cofetarie c) {
+	printf("\nCofetaria %s are id-ul %d.", c.nume, c.id);
 }
 
 void parcurgereLista(NodPrincipal* np) {
 	while (np) {
-		afisareMasina(np->info);
+		afisareCofetarie(np->info);
 		NodSecundar* aux = np->vecini;
 		printf("\nVecini: ");
 		while (aux) {
-			afisareMasina(aux->info->info);
+			afisareCofetarie(aux->info->info);
 			aux = aux->next;
 		}
 		printf("\n");
@@ -175,52 +175,6 @@ int getNumarNoduri(NodPrincipal* graf) {
 	return nr;
 }
 
-void parcurgereInAdancime(NodPrincipal* graf, int id)
-{
-	int nr_noduri = getNumarNoduri(graf);
-	int* vizitate = (int*)malloc(sizeof(int) * nr_noduri);
-	for (int i = 0; i < nr_noduri; i++)
-	{
-		vizitate[i] = 0;
-	}
-	ListaDubla stiva;
-	stiva.first = NULL;
-	stiva.last = NULL;
-	push(&stiva, id);
-	vizitate[id - 1] = 1;
-	while (stiva.first)
-	{
-		int id_scos = pop(&stiva);
-		NodPrincipal* nod_curent = cautareNod(graf, id_scos);
-		afisareMasina(nod_curent->info);
-		NodSecundar* vecini = nod_curent->vecini;
-		while (vecini)
-		{
-			if (vizitate[vecini->info->info.id - 1] == 0)
-			{
-				push(&stiva, vecini->info->info.id);
-				vizitate[vecini->info->info.id - 1] = 1;
-			}
-			vecini = vecini->next;
-		}
-	}
-}
-
 void main() {
-	NodPrincipal* graf = NULL;
-	inserareListaPrincipala(&graf, initMasina(1, "Dacia"));
-	inserareListaPrincipala(&graf, initMasina(2, "Audi"));
-	inserareListaPrincipala(&graf, initMasina(3, "Golf"));
-	inserareListaPrincipala(&graf, initMasina(4, "Renault"));
-	inserareListaPrincipala(&graf, initMasina(5, "Mercedes"));
 
-	inserareVecini(graf, 1, 4);
-	inserareVecini(graf, 2, 4);
-	inserareVecini(graf, 2, 5);
-	inserareVecini(graf, 3, 5);
-
-	parcurgereLista(graf);
-
-	printf("\n Parcurgere in adancime:");
-	parcurgereInAdancime(graf, 1);
 }
